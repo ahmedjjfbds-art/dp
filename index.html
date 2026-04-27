@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>Farag Store</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f172a;
+    color:white;
+    direction:rtl;
+}
+
+header{
+    display:flex;
+    justify-content:space-between;
+    padding:15px 20px;
+    background:#111827;
+}
+
+.hero{
+    text-align:center;
+    padding:40px 20px;
+    background:linear-gradient(135deg,#4f46e5,#06b6d4);
+}
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+    padding:20px;
+}
+
+.card{
+    background:#1e293b;
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.card img{
+    width:100%;
+    height:150px;
+    object-fit:cover;
+}
+
+.card h3{
+    padding:10px;
+}
+
+.card p{
+    padding:0 10px;
+    color:#22c55e;
+    font-weight:bold;
+}
+
+.card button{
+    width:100%;
+    padding:10px;
+    border:none;
+    background:#4f46e5;
+    color:white;
+    cursor:pointer;
+}
+
+.cart{
+    position:fixed;
+    left:10px;
+    top:80px;
+    width:200px;
+    background:#111827;
+    padding:10px;
+    border-radius:10px;
+}
+
+.item{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    border-bottom:1px solid #333;
+    padding:5px 0;
+}
+
+.total{
+    margin-top:10px;
+    font-weight:bold;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h2>🔥 Farag Store</h2>
+    <span>🛒 <span id="count">0</span></span>
+</header>
+
+<div class="hero">
+    <h1>أهلاً بيك 👋</h1>
+    <p>منتجات بسيطة ومرتبة</p>
+</div>
+
+<div class="products" id="products"></div>
+
+<div class="cart">
+    <h3>السلة</h3>
+    <div id="cart"></div>
+    <div class="total" id="total">0 جنيه</div>
+</div>
+
+<script>
+
+const products = [
+  {id:1,name:"ساعة ذكية",price:1200,img:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"},
+  {id:2,name:"سماعة",price:800,img:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"},
+  {id:3,name:"هاتف",price:9000,img:"https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80"},
+  {id:4,name:"لابتوب",price:15000,img:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=800&q=80"}
+];
+
+let cart = [];
+
+function load(){
+    let box = document.getElementById("products");
+
+    products.forEach(p=>{
+        box.innerHTML += `
+        <div class="card">
+            <img src="${p.img}">
+            <h3>${p.name}</h3>
+            <p>${p.price} جنيه</p>
+            <button onclick="add(${p.id})">أضف للسلة</button>
+        </div>
+        `;
+    });
+}
+
+function add(id){
+    let item = products.find(p=>p.id===id);
+    cart.push(item);
+    update();
+}
+
+function update(){
+
+    document.getElementById("count").innerText = cart.length;
+
+    let box = document.getElementById("cart");
+    let total = 0;
+
+    box.innerHTML = "";
+
+    cart.forEach(i=>{
+        total += i.price;
+
+        box.innerHTML += `
+        <div class="item">
+            <span>${i.name}</span>
+            <span>${i.price}</span>
+        </div>
+        `;
+    });
+
+    document.getElementById("total").innerText = total + " جنيه";
+}
+
+load();
+
+</script>
+
+</body>
+</html>
