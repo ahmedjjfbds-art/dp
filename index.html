@@ -1,171 +1,302 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Farag Store</title>
+<title>Admin Pro System</title>
 
 <style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial;
+}
+
 body{
-    margin:0;
-    font-family:Arial;
-    background:#0f172a;
-    color:white;
-    direction:rtl;
+  background:#f4f6f9;
+  transition:0.3s;
 }
 
-header{
-    display:flex;
-    justify-content:space-between;
-    padding:15px 20px;
-    background:#111827;
+.container{
+  display:flex;
+  min-height:100vh;
 }
 
-.hero{
-    text-align:center;
-    padding:40px 20px;
-    background:linear-gradient(135deg,#4f46e5,#06b6d4);
+/* Sidebar */
+.sidebar{
+  width:240px;
+  background:#111;
+  color:#fff;
+  padding:20px;
 }
 
-.products{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:15px;
-    padding:20px;
+.sidebar h2{
+  color:#00d4ff;
+  margin-bottom:20px;
+}
+
+.sidebar ul{
+  list-style:none;
+}
+
+.sidebar ul li{
+  padding:12px;
+  margin:8px 0;
+  cursor:pointer;
+  border-radius:8px;
+}
+
+.sidebar ul li:hover,
+.sidebar ul li.active{
+  background:#333;
+}
+
+/* Main */
+.main{
+  flex:1;
+  padding:20px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.topbar input{
+  padding:8px;
+  width:220px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+/* Sections */
+.section{display:none;}
+.section.active{display:block;}
+
+/* Cards */
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+  margin-bottom:20px;
 }
 
 .card{
-    background:#1e293b;
-    border-radius:12px;
-    overflow:hidden;
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
 }
 
-.card img{
-    width:100%;
-    height:150px;
-    object-fit:cover;
+/* Box */
+.box{
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
 }
 
-.card h3{
-    padding:10px;
+/* Table */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
 }
 
-.card p{
-    padding:0 10px;
-    color:#22c55e;
-    font-weight:bold;
+th,td{
+  padding:10px;
+  border-bottom:1px solid #eee;
 }
 
-.card button{
-    width:100%;
-    padding:10px;
-    border:none;
-    background:#4f46e5;
-    color:white;
-    cursor:pointer;
+/* Buttons */
+button{
+  padding:8px 12px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  background:#111;
+  color:#fff;
+  margin-top:10px;
 }
 
-.cart{
-    position:fixed;
-    left:10px;
-    top:80px;
-    width:200px;
-    background:#111827;
-    padding:10px;
-    border-radius:10px;
+/* Dark */
+.dark{
+  background:#1b1b1b;
+  color:#fff;
 }
 
-.item{
-    display:flex;
-    justify-content:space-between;
-    font-size:13px;
-    border-bottom:1px solid #333;
-    padding:5px 0;
+.dark .card,
+.dark .box{
+  background:#2a2a2a;
 }
 
-.total{
-    margin-top:10px;
-    font-weight:bold;
+.dark table{
+  color:#fff;
+}
+
+.dark input{
+  background:#333;
+  color:#fff;
 }
 </style>
 
 </head>
-
 <body>
 
-<header>
-    <h2>🔥 Farag Store</h2>
-    <span>🛒 <span id="count">0</span></span>
-</header>
+<div class="container">
 
-<div class="hero">
-    <h1>أهلاً بيك 👋</h1>
-    <p>منتجات بسيطة ومرتبة</p>
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2>Admin</h2>
+  <ul>
+    <li class="active" onclick="show('dashboard')">Dashboard</li>
+    <li onclick="show('products')">Products</li>
+    <li onclick="show('orders')">Orders</li>
+    <li onclick="show('users')">Users</li>
+  </ul>
 </div>
 
-<div class="products" id="products"></div>
+<!-- Main -->
+<div class="main">
 
-<div class="cart">
-    <h3>السلة</h3>
-    <div id="cart"></div>
-    <div class="total" id="total">0 جنيه</div>
+<div class="topbar">
+  <h2>Control Panel</h2>
+  <div>
+    <input type="text" placeholder="Search..." onkeyup="searchAll(this.value)">
+    <button onclick="document.body.classList.toggle('dark')">🌙</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="section active">
+  <div class="cards">
+    <div class="card"><h3>Users</h3><p id="userCount">0</p></div>
+    <div class="card"><h3>Products</h3><p id="productCount">0</p></div>
+    <div class="card"><h3>Orders</h3><p id="orderCount">0</p></div>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<div id="products" class="section">
+  <div class="box">
+    <h3>Products</h3>
+    <table id="productsTable"></table>
+    <button onclick="addProduct()">➕ Add Product</button>
+  </div>
+</div>
+
+<!-- ORDERS -->
+<div id="orders" class="section">
+  <div class="box">
+    <h3>Orders</h3>
+    <table id="ordersTable"></table>
+    <button onclick="addOrder()">➕ Add Order</button>
+  </div>
+</div>
+
+<!-- USERS -->
+<div id="users" class="section">
+  <div class="box">
+    <h3>Users</h3>
+    <table id="usersTable"></table>
+    <button onclick="addUser()">➕ Add User</button>
+  </div>
+</div>
+
+</div>
 </div>
 
 <script>
 
-const products = [
-  {id:1,name:"ساعة ذكية",price:1200,img:"https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80"},
-  {id:2,name:"سماعة",price:800,img:"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80"},
-  {id:3,name:"هاتف",price:9000,img:"https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80"},
-  {id:4,name:"لابتوب",price:15000,img:"https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=800&q=80"}
+/* ===== DATA ===== */
+let products = JSON.parse(localStorage.getItem("products")) || [
+  {name:"Phone", price:500},
+  {name:"Laptop", price:1200}
 ];
 
-let cart = [];
+let orders = JSON.parse(localStorage.getItem("orders")) || [
+  {name:"Ali", product:"Phone", status:"Completed"},
+  {name:"Omar", product:"Laptop", status:"Pending"}
+];
 
-function load(){
-    let box = document.getElementById("products");
+let users = JSON.parse(localStorage.getItem("users")) || [
+  {name:"Ahmed", email:"ahmed@gmail.com"},
+  {name:"Sara", email:"sara@gmail.com"}
+];
 
-    products.forEach(p=>{
-        box.innerHTML += `
-        <div class="card">
-            <img src="${p.img}">
-            <h3>${p.name}</h3>
-            <p>${p.price} جنيه</p>
-            <button onclick="add(${p.id})">أضف للسلة</button>
-        </div>
-        `;
-    });
+/* ===== SAVE ===== */
+function save(){
+  localStorage.setItem("products", JSON.stringify(products));
+  localStorage.setItem("orders", JSON.stringify(orders));
+  localStorage.setItem("users", JSON.stringify(users));
 }
 
-function add(id){
-    let item = products.find(p=>p.id===id);
-    cart.push(item);
-    update();
+/* ===== RENDER ===== */
+function render(){
+  
+  // products
+  let pTable = "<tr><th>Name</th><th>Price</th></tr>";
+  products.forEach(p=>{
+    pTable += `<tr><td>${p.name}</td><td>$${p.price}</td></tr>`;
+  });
+  document.getElementById("productsTable").innerHTML = pTable;
+
+  // orders
+  let oTable = "<tr><th>Name</th><th>Product</th><th>Status</th></tr>";
+  orders.forEach(o=>{
+    oTable += `<tr><td>${o.name}</td><td>${o.product}</td><td>${o.status}</td></tr>`;
+  });
+  document.getElementById("ordersTable").innerHTML = oTable;
+
+  // users
+  let uTable = "<tr><th>Name</th><th>Email</th></tr>";
+  users.forEach(u=>{
+    uTable += `<tr><td>${u.name}</td><td>${u.email}</td></tr>`;
+  });
+  document.getElementById("usersTable").innerHTML = uTable;
+
+  // counts
+  document.getElementById("productCount").innerText = products.length;
+  document.getElementById("orderCount").innerText = orders.length;
+  document.getElementById("userCount").innerText = users.length;
+
+  save();
 }
 
-function update(){
-
-    document.getElementById("count").innerText = cart.length;
-
-    let box = document.getElementById("cart");
-    let total = 0;
-
-    box.innerHTML = "";
-
-    cart.forEach(i=>{
-        total += i.price;
-
-        box.innerHTML += `
-        <div class="item">
-            <span>${i.name}</span>
-            <span>${i.price}</span>
-        </div>
-        `;
-    });
-
-    document.getElementById("total").innerText = total + " جنيه";
+/* ===== ADD ===== */
+function addProduct(){
+  products.push({name:"New Product", price:Math.floor(Math.random()*1000)});
+  render();
 }
 
-load();
+function addOrder(){
+  orders.push({name:"User", product:"Phone", status:"Pending"});
+  render();
+}
+
+function addUser(){
+  users.push({name:"New User", email:"user@gmail.com"});
+  render();
+}
+
+/* ===== NAV ===== */
+function show(id){
+  document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* ===== SEARCH ===== */
+function searchAll(val){
+  let rows = document.querySelectorAll("table tr");
+  rows.forEach((r,i)=>{
+    if(i===0) return;
+    r.style.display = r.innerText.toLowerCase().includes(val.toLowerCase())
+    ? "" : "none";
+  });
+}
+
+/* INIT */
+render();
 
 </script>
 
